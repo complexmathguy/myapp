@@ -1,0 +1,252 @@
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<script type="text/javascript" src="/js/jquery-mask-as-number.js"></script>
+<script type="text/javascript" src="/js/bootstrap-datetimepicker.js"></script>
+
+<script>
+    $('.maskedWholeNumberField').maskAsNumber();
+    $('.maskedDecimalField').maskAsNumber({decimals: 2});
+</script>
+
+<script type="text/javascript">
+    $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd',autoclose: true,todayBtn: true});
+</script>             
+
+<script type="text/javascript">
+
+	$( document ).ready(function()
+	{
+		var action = getParam("action");
+
+	 	if ( action == 'edit' )
+			$( '#AddressAssociationDivId' ).show();
+
+		var url, args, parentId, parentUrl, addUrl, deleteUrl, modelUrl;
+ 
+	 	var id = getParam("addressId");
+
+		// if edit, populate form fields		
+		if ( action == 'edit' )
+		{
+			var id = getParam("addressId");
+			
+			jQuery.ajax(
+			{
+		  		url: '/Address/load?addressId=' + id,
+		  		dataType: 'json',
+			}).always(function( data ) 
+			{
+				var allControls = document.querySelectorAll("input, select, textArea");
+
+				for(var i=0; i < allControls.length; i++)
+				{
+					var element = allControls[i];
+					var elementName = element.name;
+					var val = '';
+					
+					var indexes = elementName.split( "." );
+					if ( indexes.length == 1 )
+						val = data[indexes[0]];
+					else if ( indexes.length == 2 && data[indexes[0]] != null )
+						val = data[indexes[0]][indexes[1]];
+
+					if ( val !== undefined && element.type )
+					{
+						if ( element.type === 'checkbox' )
+						{
+							if ( val == true )
+								element.checked = true;
+							else
+								element.checked = false;
+						}
+						else if ( element.type === 'select' )
+						{
+							// select the right option
+						}
+						element.value = val;
+					}
+				}
+			});
+		}
+	});
+	
+	function doneSavingAddress()
+	{
+		document.getElementById("AddressFormStatusDivId").innerHTML = '<span style="color:blue">done saving</span>';
+	}
+	
+	function resetAddress()
+	{
+		document.getElementById("AddressProfileFormId").reset();
+	}
+	
+	function saveAddress()
+	{
+		$('#AddressFormLoadingDivId').show();
+
+		// need to force the val to be handled by the Boolean type
+		$("#AddressProfileFormId input:checkbox").each(function()
+		{
+    		if ( $(this).is(':checked') == false ) 
+    			$(this).val( 'false' );    			
+    		else
+    			$(this).val('true');
+  		});
+
+		var url 		= '/Address/save';		
+		var parentUrl 	= "${parentUrl}";
+		var formData 	= formDataToJson( $('#AddressProfileFormId'));
+		var action 		= "${action}";
+
+		console.log( 'parentUrl is ' + parentUrl );
+					
+		formData = JSON.stringify( formData );
+				
+		jQuery.ajax(
+		{
+	  		url: url,
+	  		dataType: 'json',
+	  		data : formData,
+		}).always(function( data ) 
+		{
+			if ( parentUrl != 'null' && parentUrl != '' && parentUrl != '${parentUrl}' )
+			{
+				parentUrl = parentUrl + '&childId=' + data['addressId'];
+				jQuery.ajax(
+				{
+			  		url: parentUrl,
+			  		dataType: 'json',
+				}).always(function( data ) 
+				{
+				});
+			}
+
+/* 
+   force a close on create rather than show the children since there are none,\
+   causing an inspection on a freshly created Address
+   
+			// need to assign the related hidden primary key element value to 
+			// the new value created during the save
+			document.getElementById('addressId').value = data['addressId'];
+
+			if ( action == 'create' )
+				$( '#AddressAssociationDivId' ).show();
+*/				
+			doneSavingAddress();
+		});
+		
+		$('#AddressFormLoadingDivId').hide();			
+	
+	}
+    function addHelperForAddress( associationClassType, roleName )
+	{    
+		var title = "Add New " + associationClassType + " for Address " + roleName;
+		var parentId = document.getElementById("addressId").value;
+		parentUrl = '/Address/save' + roleName + '?addressId=' + parentId;
+		var url = '/html/' + associationClassType + 'ProfileForm.html?action=create&parentUrl=' + parentUrl + '&parentName=address&roleName=' + roleName;
+		var eventToFire = 'refresh' + roleName + 'ForAddress';
+		inspectionDialog( title, url, eventToFire );
+    }
+
+	function deleteHelperForAddress( nameOfRole, keyFieldName, ids )
+	{
+    	BootstrapDialog.confirm
+    	({
+        	title: 'WARNING',
+        	message: 'Are you sure?',
+            type: BootstrapDialog.TYPE_WARNING, // <-- Default value is BootstrapDialog.TYPE_PRIMARY
+            closable: true, // <-- Default value is false
+            btnCancelLabel: 'No', // <-- Default value is 'Cancel',
+            btnOKLabel: 'Yes', // <-- Default value is 'OK',
+            btnOKClass: 'btn-warning', // <-- If you didn't specify it, dialog type will be used,
+            callback: function(result) 
+            {
+				var elementName = nameOfRole.toLowerCase() + "." + keyFieldName;
+				var element 	= document.getElementsByName(elementName)[0];
+				var url 		= '/Address/delete' + nameOfRole;
+				
+				url = url + '?childIds=' + ids;
+				
+				jQuery.ajax(
+				{
+			  		url: url,
+			  		dataType: 'text',
+			  		data : $('#AddressProfileFormId').serialize(),
+				}).always(function( data ) 
+				{
+					document.getElementById("AddressFormStatusDivId").innerHTML = '<span style="color:blue">done deleting</span>';
+					element.value = ""; // clear it
+				});
+			}
+    	});
+	
+	}
+</script>
+
+<div id="AddressProfileFormDiv" style="padding:4px;border:2px solid lightgray">
+  <form id="AddressProfileFormId" class="formTableClass">
+    <input type=hidden id="addressId" name="addressId" />  		  	
+<!-- Direct Attributes -->          	
+<table class="formTableClass">
+	<tr class="formTRClass">
+	  <td class="formTDClass">street</td>
+	  <td class="formTDClass">	<input type='text' id="street" name="street" placeHolder="street" required="" validate="" class="form-control" />	
+	</td>
+	</tr>
+	<tr class="formTRClass">
+	  <td class="formTDClass">city</td>
+	  <td class="formTDClass">	<input type='text' id="city" name="city" placeHolder="city" required="" validate="" class="form-control" />	
+	</td>
+	</tr>
+	<tr class="formTRClass">
+	  <td class="formTDClass">state</td>
+	  <td class="formTDClass">	<input type='text' id="state" name="state" placeHolder="state" required="" validate="" class="form-control" />	
+	</td>
+	</tr>
+	<tr class="formTRClass">
+	  <td class="formTDClass">zipCode</td>
+	  <td class="formTDClass">	<input type='text' id="zipCode" name="zipCode" placeHolder="zipCode" required="" validate="" class="form-control" />	
+	</td>
+	</tr>
+</table>
+
+<!-- Composites -->          	
+    <table class="formTableClass">
+    </table>
+  	<br>
+	<div>
+		<a href="#" data-toggle="tooltip" data-placement="below" title="save Address" onclick="saveAddress()">
+		    <button type="button" class="btn btn-outline-primary">
+		      	Save
+			</button>
+		</a>
+		<a href="#" data-toggle="tooltip" data-placement="below" title="reset" onclick="resetAddress()">
+			<button type="button" class="btn btn-outline-primary">	
+		      	Reset
+			</button>
+		</a>
+	</div>
+	 <div id="AddressFormLoadingDivId" style="display:none">
+  		saving Address...<image src="../img/load_new.gif" width=48 height=48/>
+	</div>				  				  
+	<div id="AddressFormStatusDivId">
+	</div>				  				  
+	 
+  </form>
+</div>
+
+<div id="AddressAssociationDivId" style="display:none">
+  <div class="singleAssociationClass">
+    <table class="associationTableClass">
+	</table>
+  </div>
+
+  <div "class=multipleAssociationClass">  
+	<table class="associationTableClass">  
+	</table>
+
+  </div>
+</div>
+
+

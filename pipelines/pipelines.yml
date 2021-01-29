@@ -1,0 +1,57 @@
+
+template: true   # required for local templates
+valuesFilePath: ./values.yml
+
+resources:
+  - name: demoRepo
+    type: GitRepo
+    configuration:
+      # SCM integration where the repository is located
+      gitProvider: {{ .Values.demoRepo.gitProvider }} # this will be replaced from values.yml
+      # Repository path, including org name/repo name
+      path: {{ .Values.myRepo.path }} # this will be replaced from values.yml
+      branches:
+        # Specifies which branches will trigger dependent steps
+        include: master
+       
+pipelines:
+  - name: ${app}Pipeline
+
+      runtime:      
+        type: image
+		configuration:
+		      runtime:
+		        type: image
+		        image:
+		          auto:
+		            language: java
+		            versions:
+		              - 8
+
+
+
+#JFrog_Pipelines_Step_Build
+
+- name: docker_build_step
+  type: Bash
+  configuration:
+	runtime:      
+	type: image
+	image:
+	  custom:
+	    name: docker:docker
+        tag: latest
+	    options: "-e HOME=/root"
+#	    registry: art            # if custom image is private, an integration is required for authentication
+#	    sourceRepository:        # required if registry is Artifactory. e.g. docker-local
+#       region:                  # required if registry is AWS. e.g. us-east-1  
+  execution:
+    onExecute:
+      - docker login --username complexmathguy --password 00Corvette
+      - docker build -t realmethods/myapp:latest .
+      - docker push realmethods/myapp:latest
+
+
+
+
+

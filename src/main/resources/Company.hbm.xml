@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+    Copyright (c) 2017 
+   
+    This file is part of cloudMigrate.
+   
+        cloudMigrate is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+   
+        cloudMigrate is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+   
+        You should have received a copy of the GNU General Public License
+        along with cloudMigrate.  If not, see <http://www.gnu.org/licenses/>.
+        
+    Contributors:
+        cloudMigrate Inc - initial API and implementation
+ -->
+
+<!DOCTYPE hibernate-mapping PUBLIC 
+	"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+	
+<hibernate-mapping default-cascade="all" default-lazy="false"> 
+
+<!-- AIB : #hibernateClassDeclaration() -->        
+   <class name="com.occulue.bo.Company" 
+         table="company"
+         abstract="false">         
+     <id name="companyId" type="long" >
+      <generator class="native"/>    
+    </id>
+       <property name="name" column="name" not-null="false"/>
+      <property name="establishedOn" column="establishedOn" not-null="false"/>
+      <property name="revenue" column="revenue" not-null="false"/>
+        	<property name="type" column="type">
+    	<type name="org.hibernate.type.EnumType">
+        	<param name="enumClass">com.occulue.bo.CompanyType</param>
+            <param name="useNamed">true</param>
+		</type>
+	</property>
+   	<property name="industry" column="industry">
+    	<type name="org.hibernate.type.EnumType">
+        	<param name="enumClass">com.occulue.bo.Industry</param>
+            <param name="useNamed">true</param>
+		</type>
+	</property>
+   
+                     
+                                                  <set name="Employees" cascade="persist">
+            <key column="fk_company_employees_id"/>
+            <one-to-many class="com.occulue.bo.Employee"/>
+          </set>			
+                                    
+                                                  <set name="Departments" cascade="persist">
+            <key column="fk_company_departments_id"/>
+            <one-to-many class="com.occulue.bo.Department"/>
+          </set>			
+                                    
+                                                  <set name="Divisions" cascade="persist">
+            <key column="fk_company_divisions_id"/>
+            <one-to-many class="com.occulue.bo.Division"/>
+          </set>			
+                                    
+                                                  <set name="BoardMembers" cascade="persist">
+            <key column="fk_company_boardmembers_id"/>
+            <one-to-many class="com.occulue.bo.Employee"/>
+          </set>			
+                                    
+                   	                     <many-to-one name="address" cascade="save-update"/>
+                                      </class>
+<!-- ~AIB -->
+
+</hibernate-mapping>
