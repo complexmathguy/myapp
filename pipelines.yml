@@ -12,24 +12,31 @@ resources:
       branches:
         # Specifies which branches will trigger dependent steps
         include: master
-       
+	
 pipelines:
-  - name: ${app}Pipeline
-
-      runtime:      
+  - name: demoPipeline
+  runtime:
+    type: image
+    configuration:
+      runtime:
         type: image
-		configuration:
-		      runtime:
-		        type: image
-		        image:
-		          auto:
-		            language: java
-		            versions:
-		              - 8
+        image:
+          auto:
+            language: java
+            versions:
+            - 8
 
-
-
-#JFrog_Pipelines_Step_Build
+- name: build_step
+  type: Bash
+  configuration:
+    inputResources:
+      - name: demoRepo     # Trigger execution on code commit
+  execution:
+    onExecute:
+      - sudo apt-get install -y maven
+      - mvn test
+      - mkdir -p JFrog_Pipelines/testresults
+      - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
 
 - name: docker_build_step
   type: Bash
