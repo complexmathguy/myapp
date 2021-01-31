@@ -38,7 +38,7 @@ pipelines:
               repo_passsword: "6969Cutlass!!"
               repo_url: "https://jcenter.bintray.com"
           sourceLocation: .
-          mvnCommand: clean install
+          mvnCommand: clean package
           inputResources:
             - name: demoRepo             # Use the demoRepo resource
           integrations:
