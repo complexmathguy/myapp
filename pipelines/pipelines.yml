@@ -16,28 +16,28 @@ resources:
        
 pipelines:
   - name: demoPipeline
-    runtime:      
-      type: image
-        configuration:
-	  runtime:
-            type: image
-		        image:
-		          auto:
-		            language: java
-		            versions:
-		              - 8
+  runtime:      
+    type: image
+    configuration:
+      runtime:
+        type: image
+        image:
+          auto:
+            language: java
+            versions:
+            - 8
 
 - name: build_step
   type: Bash
   configuration:
     inputResources:
-      - name: ${appName}Repo     # Trigger execution on code commit
+      - name: demoRepo     # Trigger execution on code commit
   execution:
     onExecute:
       - sudo apt-get install -y maven
       - mvn test
       - mkdir -p JFrog_Pipelines/testresults
-      - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
+      - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} demo/testresults/ \;
 
 - name: docker_build_step
   type: Bash
