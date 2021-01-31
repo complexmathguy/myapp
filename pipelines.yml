@@ -31,12 +31,12 @@ pipelines:
             - name: demoRepo     # Trigger execution on code commit
           affinityGroup: together
         runtime:      
-            type: image
-            image:
-              custom:
-                name: docker:docker
-                tag: latest
-                options: "-e HOME=/root" 		  
+          type: image
+          image:
+            custom:
+              name: docker:docker
+              tag: latest
+              options: "-e HOME=/root" 		  
         execution:
           onExecute:
             - sudo apt-get install -y maven
