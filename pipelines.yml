@@ -15,14 +15,6 @@ resources:
 
 pipelines:
   - name: demoPipeline
-    configuration:
-      runtime:
-        type: image
-        image:
-          auto:
-            language: java
-            versions:
-            - "8"
     steps:
       - name: build_step
         type: MvnBuild
