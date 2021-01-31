@@ -12,6 +12,12 @@ resources:
       branches:
         # Specifies which branches will trigger dependent steps
         include: master
+  - name: demoBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory:    MyMavenIntegration
+      buildName:            demoBuild
+      buildNumber:          1
 
 pipelines:
   - name: demoPipeline2 
@@ -26,7 +32,7 @@ pipelines:
               repo_passsword: "6969Cutlass!!"
               repo_url: "https://jcenter.bintray.com"
           sourceLocation: .
-          mvnCommand: clean package
+          mvnCommand: compile
           integrations:
             - name: MyMavenIntegration    
           forceXrayScan: true
