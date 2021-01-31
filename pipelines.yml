@@ -14,9 +14,9 @@ resources:
         include: master
 
 pipelines:
-  - name: demoPipeline
+  - name: demoPipeline2
     steps:
-      - name: build_step
+      - name: build_step2
         type: MvnBuild
         configuration:
           sourceLocation: .
