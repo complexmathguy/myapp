@@ -289,6 +289,6 @@ under the License.
   -->
   <activeProfiles>
     <!--make the profile active all the time -->
-    <activeProfile>nexus</activeProfile>
+    <activeProfile>jfrog</activeProfile>
   </activeProfiles>
 </settings>
