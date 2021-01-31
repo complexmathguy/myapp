@@ -33,8 +33,6 @@ pipelines:
         execution:
           onExecute:
             - sudo apt-get install -y maven
-            - printenv
-            - echo "${PWD##*/}"
             - ls
             - mvn test
             - mkdir -p JFrog_Pipelines/testresults
