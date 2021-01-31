@@ -38,6 +38,8 @@ pipelines:
         configuration:     
           inputSteps: 
             - name: mysql_step
+          inputResources:
+            - name: demoRepo             # Use the demoRepo resource            
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
