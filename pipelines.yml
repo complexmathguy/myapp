@@ -23,8 +23,8 @@ pipelines:
             type: image
             image:
               custom:
-              name: mysql
-              tag: latest         
+                name: mysql
+                tag: latest         
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
