@@ -34,7 +34,7 @@ pipelines:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
               repo_url: "https://jcenter.bintray.com"
-              skipTests: "false"
+              skipTests: "true"
           sourceLocation: .
           mvnCommand: clean install
           integrations:
