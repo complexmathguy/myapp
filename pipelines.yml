@@ -36,7 +36,7 @@ pipelines:
             - mkdir -p JFrog_Pipelines/testresults
             - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
 
-      - name: docker_build_step
+      - name: docker_build_and_push_step
         type: Bash
         configuration:
           runtime:      
