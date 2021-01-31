@@ -1,13 +1,13 @@
 demoRepo:
-  gitProvider: 
+  gitProvider: MyAngularGitHub
   path: complexmathguy/myapp
-  TestDBUrl:  )
+  TestDBUrl:
   TestDBName: demo_test_db
   TestDBPassword: 
   TestDBDialect: org.hibernate.dialect.MySQL8Dialect 
   TestDBDriver: com.mysql.cj.jdbc.Driver
   DockerUserName: complexmathguy
   DockerPassword: 00Corvette
-  DockerOrgName: 
+  DockerOrgName: realmethods
   DockerRepo: myapp
   DockerTag: latest
