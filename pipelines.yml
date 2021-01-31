@@ -18,7 +18,13 @@ pipelines:
     steps:
       - name: build_step2
         type: MvnBuild
-        configuration:
+        runtime:
+          type: image
+          image:
+            custom:
+              name: mysql
+              tag: latest
+        configuration:        
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
