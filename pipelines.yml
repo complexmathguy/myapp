@@ -19,6 +19,9 @@ pipelines:
       - name: build_step2
         type: MvnBuild
         configuration:
+          environmentVariables:
+            repo.name: steven.randolph@realmethods.com
+            repo.passsword: 6969Cutlass!!
           sourceLocation: .
           mvnCommand: clean install
           inputResources:
