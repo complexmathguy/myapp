@@ -15,7 +15,7 @@ resources:
         include: master
        
 pipelines:
-  - name: ${app}Pipeline
+  - name: demoPipeline
 
       runtime:      
         type: image
