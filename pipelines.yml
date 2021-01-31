@@ -1,5 +1,5 @@
 template: true   # required for local templates
-valuesFilePath: ./values.yml
+valuesFilePath: values.yml
 
 resources:
   - name: demoRepo
@@ -8,7 +8,7 @@ resources:
       # SCM integration where the repository is located
       gitProvider: {{ .Values.demoRepo.gitProvider }} # this will be replaced from values.yml
       # Repository path, including org name/repo name
-      path: {{ .Values.myRepo.path }} # this will be replaced from values.yml
+      path: {{ .Values.demoRepo.path }} # this will be replaced from values.yml
       branches:
         # Specifies which branches will trigger dependent steps
         include: master
