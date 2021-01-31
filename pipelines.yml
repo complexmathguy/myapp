@@ -40,8 +40,8 @@ pipelines:
             - name: MyMavenIntegration    
           forceXrayScan: true
           failOnScan: true   
-          deployerReleaseRepo: cutlasscutlass
-          deployerSnapshotRepo: cutlasscutlass
+          deployerReleaseRepo: local-maven-repo
+          deployerSnapshotRepo: local-maven-repo
         execution:
           onSuccess:
            - echo "Build step using Maven is complete!"     
