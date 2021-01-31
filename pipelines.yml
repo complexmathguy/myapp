@@ -41,6 +41,7 @@ pipelines:
           forceXrayScan: true
           failOnScan: true   
           deployerReleaseRepo: cutlasscutlass
+          deployerSnapshotRepo: cutlasscutlass
         execution:
           onSuccess:
            - echo "Build step using Maven is complete!"     
