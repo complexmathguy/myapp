@@ -36,7 +36,8 @@ pipelines:
             - mkdir -p JFrog_Pipelines/testresults
             - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
           onSuccess:
-            - echo "Build step using Maven is complete!"            
+            - echo "Build step using Maven is complete!"     
+            
       - name: docker_build_and_push_step
         type: Bash
         configuration:
