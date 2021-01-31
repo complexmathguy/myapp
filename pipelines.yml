@@ -33,6 +33,7 @@ pipelines:
         execution:
           onExecute:
             - sudo apt-get install -y maven
+            - printenv
             - cd $res_src_resourcePath
             - ls
             - mvn test
