@@ -15,15 +15,15 @@ resources:
 
 pipelines:
   - name: demoPipeline2
+    runtime:
+      type: image
+      image:
+        custom:
+        name: mysql
+        tag: latest  
     steps:
       - name: build_step2
         type: MvnBuild
-        runtime:
-          type: image
-          image:
-            custom:
-              name: mysql
-              tag: latest
         configuration:        
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
