@@ -26,7 +26,7 @@ pipelines:
     steps:
       - name: build_step
         type: MvnBuild
-          configuration:
+        configuration:
           sourceLocation: .
           mvnCommand: clean install
           configFileLocation: .
