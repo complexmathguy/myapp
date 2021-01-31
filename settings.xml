@@ -131,15 +131,10 @@ under the License.
     </server>
     -->
 	<server>
-	  <id>jfrog.repo</id>
+	  <id>jfrog</id>
       <username>${internal.repo.username}</username>
       <password>${internal.repo.password}</password>
 	</server>
-    <server>
-      <id>nexus</id>
-      <username>${internal.repo.username}</username>
-      <password>${internal.repo.password}</password>
-    </server>	
   </servers>
 
   <!-- mirrors
@@ -262,7 +257,7 @@ under the License.
     -->
 
     <profile>
-      <id>nexus</id>
+      <id>jfrog</id>
       <!--Enable snapshots for the built in central repo to direct -->
       <!--all requests to nexus via the mirror -->
       <repositories>
