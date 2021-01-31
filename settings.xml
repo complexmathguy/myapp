@@ -132,8 +132,8 @@ under the License.
     -->
 	<server>
 	  <id>jfrog</id>
-      <username>${internal.repo.username}</username>
-      <password>${internal.repo.password}</password>
+      <username>${repo_username}</username>
+      <password>${repo_password}</password>
 	</server>
   </servers>
 
@@ -163,9 +163,9 @@ under the License.
      -->
 	<mirror>
       <!--This sends everything else to /public -->
-      <id>nexus</id>
+      <id>jfrog</id>
       <mirrorOf>*</mirrorOf>
-      <url>${internal.repo.url}</url>
+      <url>${repo_url}</url>
     </mirror>
   </mirrors>
 
