@@ -33,6 +33,7 @@ pipelines:
         execution:
           onExecute:
             - sudo apt-get install -y maven
+            - ls
             - mvn test
             - mkdir -p JFrog_Pipelines/testresults
             - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
