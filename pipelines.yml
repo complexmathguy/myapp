@@ -33,7 +33,7 @@ pipelines:
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
-              repo_url: "https://knowops.jfrog.io/artifactory/local-maven-repo/"
+              repo_url: "https://jcenter.bintray.com"
           sourceLocation: .
           mvnCommand: compile
           integrations:
