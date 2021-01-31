@@ -42,13 +42,6 @@ pipelines:
         type: Bash
         configuration:
           affinityGroup: together
-          runtime:      
-            type: image
-            image:
-              custom:
-                name: docker:docker
-                tag: latest
-                options: "-e HOME=/root" 
         execution:
           onExecute:
           - docker login --username complexmathguy --password 00Corvette
