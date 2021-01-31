@@ -44,8 +44,8 @@ pipelines:
           affinityGroup: together
         execution:
           onExecute:
-          - docker login --username complexmathguy --password 00Corvette
-          - docker build -t realmethods/myapp:latest .
-          - docker push realmethods/myapp:latest
+            - docker login --username complexmathguy --password 00Corvette
+            - docker build -t realmethods/myapp:latest .
+            - docker push realmethods/myapp:latest
           onSuccess:
             - echo "Docker build and push step is complete!"            
