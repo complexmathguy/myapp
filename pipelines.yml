@@ -29,22 +29,12 @@ pipelines:
         configuration:
           inputResources:
             - name: demoRepo     # Trigger execution on code commit
-          affinityGroup: together
-        runtime:      
-          type: image
-          image:
-            custom:
-              name: docker:docker
-              tag: latest
-              options: "-e HOME=/root" 		  
+          affinityGroup: together	  
         execution:
           onExecute:
             - sudo apt-get install -y maven
             - mvn test
             - mkdir -p JFrog_Pipelines/testresults
             - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
-            - docker login --username complexmathguy --password 00Corvette
-            - docker build -t realmethods/myapp:latest .
-            - docker push realmethods/myapp:latest
           onSuccess:
             - echo "Build step using Maven is complete!"     
