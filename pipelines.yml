@@ -14,33 +14,36 @@ resources:
         include: master
 
 pipelines:
-  - name: mysql
-    configuration:
-      runtime:
-        type: image
-        image:
-          custom:
-            name: mysql
-            tag: latest
-    steps:
-      - name: p1_s3
-        type: Bash
-        execution:
-          onExecute:
-            - service mysql status      
   - name: demoPipeline2 
     steps:
+      - name: mysql_step
+        type: Bash
+        configuration:
+          inputResources:
+            - name: demoRepo             # Use the demoRepo resource
+          runtime:
+            type: image
+            image:
+              custom:
+                name: mysql
+                tag: latest
+        execution:
+          onExecute:
+            - service mysql status 
+          onSuccess:
+           - echo "MySQL is running!!"     
+            
       - name: build_step2
         type: MvnBuild
         configuration:     
+          inputSteps: 
+            - name: mysql_step
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
               repo_url: "https://jcenter.bintray.com"
           sourceLocation: .
           mvnCommand: clean package
-          inputResources:
-            - name: demoRepo             # Use the demoRepo resource
           integrations:
             - name: MyMavenIntegration            
         execution:
