@@ -34,8 +34,9 @@ pipelines:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"
               repo_url: "https://jcenter.bintray.com"
+              skipTests: "false"
           sourceLocation: .
-          mvnCommand: compile
+          mvnCommand: clean install
           integrations:
             - name: MyMavenIntegration    
           forceXrayScan: true
