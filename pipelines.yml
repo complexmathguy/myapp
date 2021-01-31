@@ -12,11 +12,9 @@ resources:
       branches:
         # Specifies which branches will trigger dependent steps
         include: master
-	
+
 pipelines:
   - name: demoPipeline
-  runtime:
-    type: image
     configuration:
       runtime:
         type: image
