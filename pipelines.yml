@@ -21,7 +21,6 @@ pipelines:
         configuration:
           sourceLocation: .
           mvnCommand: clean install
-          configFileLocation: .
           inputResources:
             - name: demoRepo             # Use the demoRepo resource
           integrations:
