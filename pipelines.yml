@@ -19,7 +19,6 @@ pipelines:
       - name: build_step2
         type: MvnBuild
         configuration:          
-          autoPublishBuildInfo: true
           inputResources:
             - name: demoRepo             # Use the demoRepo resource            
           environmentVariables:
