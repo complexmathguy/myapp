@@ -24,33 +24,33 @@ pipelines:
             versions:
             - "8"
 
-- name: build_step
-  type: Bash
-  configuration:
-    inputResources:
-      - name: demoRepo     # Trigger execution on code commit
-  execution:
-    onExecute:
-      - sudo apt-get install -y maven
-      - mvn test
-      - mkdir -p JFrog_Pipelines/testresults
-      - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
+  - name: build_step
+    type: Bash
+    configuration:
+      inputResources:
+        - name: demoRepo     # Trigger execution on code commit
+    execution:
+      onExecute:
+        - sudo apt-get install -y maven
+        - mvn test
+        - mkdir -p JFrog_Pipelines/testresults
+        - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} JFrog_Pipelines/testresults/ \;
 
-- name: docker_build_step
-  type: Bash
-  configuration:
-	runtime:      
-	type: image
-	image:
-	  custom:
-	    name: docker:docker
-        tag: latest
-	    options: "-e HOME=/root"
+  - name: docker_build_step
+    type: Bash
+    configuration:
+      runtime:      
+        type: image
+        image:
+          custom:
+            name: docker:docker
+            tag: latest
+            options: "-e HOME=/root"
 #	    registry: art            # if custom image is private, an integration is required for authentication
 #	    sourceRepository:        # required if registry is Artifactory. e.g. docker-local
 #       region:                  # required if registry is AWS. e.g. us-east-1  
-  execution:
-    onExecute:
+    execution:
+      onExecute:
       - docker login --username complexmathguy --password 00Corvette
       - docker build -t realmethods/myapp:latest .
       - docker push realmethods/myapp:latest
