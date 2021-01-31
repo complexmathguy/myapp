@@ -34,7 +34,7 @@ pipelines:
           onExecute:
             - sudo apt-get install -y maven
             - printenv
-            - cd $pipeline_workspace_dir
+            - cd $step_workspace_dir
             - ls
             - mvn test
             - mkdir -p JFrog_Pipelines/testresults
