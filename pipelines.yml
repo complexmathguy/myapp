@@ -20,7 +20,7 @@ pipelines:
         type: MvnBuild
         configuration:
           environmentVariables:
-            repo.name: "steven.randolph@realmethods.com"
+            repo.username: "steven.randolph@realmethods.com"
             repo.passsword: "6969Cutlass!!"
             repo.url: "https://jcenter.bintray.com"
           sourceLocation: .
