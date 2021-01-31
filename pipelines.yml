@@ -39,7 +39,8 @@ pipelines:
           integrations:
             - name: MyMavenIntegration    
           forceXrayScan: true
-          failOnScan: true            
+          failOnScan: true   
+          deployerReleaseRepo: cutlasscutlass
         execution:
           onSuccess:
            - echo "Build step using Maven is complete!"     
