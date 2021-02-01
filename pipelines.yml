@@ -79,7 +79,7 @@ pipelines:
           dockerImageTag:      latest
  
           integrations:
-            - name:            MyDockerHubRegistry  # required
+            - name:            MyDockerHubIntegration  # required
  
           inputResources:
             - name:             demoRepo         # required, git repository containing your Dockerfile
