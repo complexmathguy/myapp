@@ -30,6 +30,15 @@ resources:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
+  - name: dbp_image
+    type: Image
+    configuration:
+      registry: MyDockerIntegration                # <-- replace with your artifactory integration
+      sourceRepository: MyDockerRegistry           # <-- required if registry is Artifactory
+      imageName: knowops.jfrog.io/realmethods/myapp  # < -- replace with your image path and name
+      imageTag: latest
+      autoPull: true
+      
 pipelines:
   - name: demoPipeline2 
     steps:
@@ -66,11 +75,12 @@ pipelines:
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     realmethods/myapp
+          dockerImageName:     knowops.jfrog.io/realmethods/myapp
           dockerImageTag:      latest
  
           integrations:
-            - name:            MyDockerRegistry  # required
+ #           - name:            MyDockerRegistry  # required
+            - name:            dbp_image
 
           inputResources:
             - name:             demoRepo         # required, git repository containing your Dockerfile
@@ -98,7 +108,9 @@ pipelines:
           autoPublishBuildInfo: true                # default false
  
           integrations:
-            - name:             MyMavenIntegration  # required
+#            - name:             MyMavenIntegration  # required
+            - name:            dbp_image
+            
           inputSteps:
             - name:             docker_build_step   # required
           outputResources:
