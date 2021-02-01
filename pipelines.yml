@@ -18,7 +18,12 @@ resources:
       sourceArtifactory:    MyMavenIntegration
       buildName:            demoBuild
       buildNumber:          1
-
+  - name: demoDockerBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory:    MyDockerntegration
+      buildName:            demoDockerBuild
+      buildNumber:          1
 pipelines:
   - name: demoPipeline2 
     steps:
@@ -85,11 +90,11 @@ pipelines:
           autoPublishBuildInfo: true                # default false
  
           integrations:
-            - name:             MyDockerRegistry    # required
+            - name:             MyMavenIntegration  # required
           inputSteps:
             - name:             docker_build_step   # required
           outputResources:
-            - name:             demoBuildInfo       # required if autoPublishBuildInfo is true
+            - name:             demoDockerBuildInfo # required if autoPublishBuildInfo is true
  
         execution:
           onStart:
