@@ -35,7 +35,7 @@ resources:
     configuration:
       registry: DockerRegistry               # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
-      imageName: knowops.jfrog.io/realmethods/myapp  # < -- replace with your image path and name
+      imageName: knowops.jfrog.io/local-docker-repo/myapp  # < -- replace with your image path and name
       imageTag: latest
       autoPull: false
       
@@ -75,7 +75,7 @@ pipelines:
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     knowops.jfrog.io/realmethods/myapp
+          dockerImageName:     knowops.jfrog.io/local-docker-repo/myapp
           dockerImageTag:      latest
  
           integrations:
