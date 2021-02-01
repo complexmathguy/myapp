@@ -1,7 +1,4 @@
-FROM maven:3-openjdk-8
-
-RUN printenv
-RUN mvn clean package
+FROM openjdk:8
 
 RUN mkdir /usr/local/demoApp
 COPY ./target/demo-1.0.0.jar /usr/local/demoApp/
