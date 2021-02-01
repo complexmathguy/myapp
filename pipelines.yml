@@ -68,7 +68,6 @@ pipelines:
           dockerFileName:      Dockerfile
           dockerImageName:     realmethods/myapp
           dockerImageTag:      latest
-          dockerOptions:       --build-arg ARCHIVE_DIR="${res_buildArchiveFile_resourcePath}"
  
           integrations:
             - name:            MyDockerRegistry  # required
@@ -83,6 +82,7 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for Docker image build..."
+            - cp "${res_buildArchiveFile_resourcePath}/*.jar" .
           onSuccess:
             - echo "Docker image build was successful"
           onFailure:
