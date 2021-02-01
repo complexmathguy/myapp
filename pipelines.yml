@@ -82,9 +82,10 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for Docker image build..."
-            - printenv
+            - echo $res_buildArchiveFile_resourcePath
             - ls "${res_buildArchiveFile_resourcePath}/target/com/occulue/demo/1.0.0"
-            - cp "${res_buildArchiveFile_resourcePath}/target/com/occulue/demo/1.0.0/*.jar" .
+            - ls
+            - cp ${res_buildArchiveFile_resourcePath}/target/com/occulue/demo/1.0.0/demo-1.0.0.jar .
           onSuccess:
             - echo "Docker image build was successful"
           onFailure:
