@@ -84,7 +84,6 @@ pipelines:
           inputResources:
             - name:             demoRepo         # required, git repository containing your Dockerfile
             - name:             buildArchiveFile # what was constructed during the build step
-            - name:             dbp_image9
 
           inputSteps:
             - name:             build_step2
