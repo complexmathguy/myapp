@@ -28,7 +28,7 @@ resources:
     type: FileSpec
     configuration:
       sourceArtifactory: MyMavenIntegration
-      pattern: local-maven-repo/**/**/demo-1.0.0.jar
+      pattern: local-maven-repo/**/**/demo*.jar
       target: target/
 pipelines:
   - name: demoPipeline2 
@@ -68,7 +68,7 @@ pipelines:
           dockerFileName:      Dockerfile
           dockerImageName:     realmethods/myapp
           dockerImageTag:      latest
-          dockerOptions:       --build-arg ARCHIVE_DIR=${res_buildArchiveFile_resourcePath}
+          dockerOptions:       --build-arg ARCHIVE_DIR=$res_buildArchiveFile_resourcePath
  
           integrations:
             - name:            MyDockerRegistry  # required
