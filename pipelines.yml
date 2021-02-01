@@ -34,7 +34,7 @@ resources:
     type: Image
     configuration:
       registry: MyDockerIntegration                # <-- replace with your artifactory integration
-      sourceRepository: MyDockerRegistry           # <-- required if registry is Artifactory
+      sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
       imageName: knowops.jfrog.io/realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
       autoPull: false
