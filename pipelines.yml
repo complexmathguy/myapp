@@ -30,7 +30,7 @@ resources:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
-  - name: dbp_image2
+  - name: dbp_image3
     type: Image
     configuration:
       registry: MyDockerIntegration                # <-- replace with your artifactory integration
@@ -113,7 +113,7 @@ pipelines:
             - name:             docker_build_step   # required
           outputResources:
             - name:             demoDockerBuildInfo # required if autoPublishBuildInfo is true
-            - name:             dbp_image2
+            - name:             dbp_image3
         execution:
           onStart:
             - echo "Preparing for Docker image push..."
