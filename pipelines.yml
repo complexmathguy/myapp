@@ -59,7 +59,7 @@ pipelines:
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     real,ethods/myapp
+          dockerImageName:     realmethods/myapp
           dockerImageTag:      latest
  
           integrations:
