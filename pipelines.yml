@@ -24,6 +24,12 @@ resources:
       sourceArtifactory:    MyDockerIntegration
       buildName:            demoDockerBuild
       buildNumber:          1
+  - name: buildArchiveFile
+    type: FileSpec
+    configuration:
+      sourceArtifactory: MyMavenIntegration
+      pattern: local-maven-repo/**/**/demo-1.0.0.jar
+      target: target/
 pipelines:
   - name: demoPipeline2 
     steps:
@@ -67,7 +73,8 @@ pipelines:
             - name:            MyDockerRegistry  # required
 
           inputResources:
-            - name:             demoRepo         # required, git repository containing your Dockerfile          
+            - name:             demoRepo         # required, git repository containing your Dockerfile
+            - name:             buildArchiveFile # what was constructed during the build step
 
           inputSteps:
             - name:             build_step2
