@@ -21,7 +21,7 @@ resources:
   - name: demoDockerBuildInfo
     type: BuildInfo
     configuration:
-      sourceArtifactory:    MyDockerIntegration
+      sourceArtifactory:    MyDockerRegistry
       buildName:            demoDockerBuild
       buildNumber:          1
 pipelines:
