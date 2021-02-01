@@ -21,7 +21,7 @@ resources:
   - name: demoDockerBuildInfo2
     type: BuildInfo
     configuration:
-      sourceArtifactory:    MyDockerHubIntegration
+      sourceArtifactory:    MyDockerIntegration
       buildName:            demoDockerBuild
       buildNumber:          1
   - name: buildArchiveFile
@@ -35,7 +35,7 @@ resources:
     configuration:
       registry: MyDockerHubIntegration                # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
-      imageName: knowops.jfrog.io/realmethods/myapp  # < -- replace with your image path and name
+      imageName: registry.hub.docker.com/realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
       autoPull: false
       
