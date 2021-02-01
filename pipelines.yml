@@ -75,7 +75,7 @@ pipelines:
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     registry.hub.docker/realmethods/myapp
+          dockerImageName:     registry.hub.docker.com/realmethods/myapp
           dockerImageTag:      latest
  
           integrations:
