@@ -1,4 +1,6 @@
-FROM openjdk:8
+FROM maven:3-openjdk-8
+
+RUN mvn clean package
 
 RUN mkdir /usr/local/demoApp
 COPY ./target/demo-1.0.0.jar /usr/local/demoApp/
