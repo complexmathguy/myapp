@@ -41,7 +41,7 @@ pipelines:
               repo_url: "https://jcenter.bintray.com"
               skipTests: "true"
           sourceLocation: .
-          mvnCommand: clean install
+          mvnCommand: clean package
           integrations:
             - name: MyMavenIntegration    
           forceXrayScan: true
