@@ -82,8 +82,8 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for Docker image build..."
-            - ls "${res_buildArchiveFile_resourcePath}"
-            - cp "${res_buildArchiveFile_resourcePath}/*.jar" .
+            - ls "${res_buildArchiveFile_resourcePath}/target"
+            - cp "${res_buildArchiveFile_resourcePath}/target/*.jar" .
           onSuccess:
             - echo "Docker image build was successful"
           onFailure:
