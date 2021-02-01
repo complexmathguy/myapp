@@ -18,12 +18,7 @@ resources:
       sourceArtifactory:    MyMavenIntegration
       buildName:            demoBuild
       buildNumber:          1
-  - name: demoDockerBuildInfo
-    type: BuildInfo
-    configuration:
-      sourceArtifactory:    MyDockerRegistry
-      buildName:            demoDockerBuild
-      buildNumber:          1
+
 pipelines:
   - name: demoPipeline2 
     steps:
@@ -94,15 +89,13 @@ pipelines:
           inputSteps:
             - name:             docker_build_step   # required
           outputResources:
-            - name:             demoDockerBuildInfo       # required if autoPublishBuildInfo is true
+            - name:             demoBuildInfo       # required if autoPublishBuildInfo is true
  
         execution:
           onStart:
-            - echo "Preparing for work..."
+            - echo "Preparing for Docker image push..."
           onSuccess:
-            - echo "Job well done!"
+            - echo "Docker image push was successful"
           onFailure:
-            - echo "uh oh, something went wrong"
-          onComplete:
-            - echo "Cleaning up some stuff"            
+            - echo "uh oh, something went wrong with the Docker image push"
 
