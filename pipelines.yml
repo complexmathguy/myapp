@@ -33,7 +33,7 @@ resources:
   - name: dbp_image5
     type: Image
     configuration:
-      registry: registry.hub.docker.com/                # <-- replace with your artifactory integration
+      registry: MyDockerHubIntegration               # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
       imageName: realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
