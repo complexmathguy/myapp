@@ -68,7 +68,7 @@ pipelines:
           dockerFileName:      Dockerfile
           dockerImageName:     realmethods/myapp
           dockerImageTag:      latest
-          dockerOptions:       --build-arg ARCHIVE_DIR=${res_buildArchiveFile_resourcePath}
+          dockerOptions:       --build-arg ARCHIVE_DIR=mybuildarchivedir
  
           integrations:
             - name:            MyDockerRegistry  # required
