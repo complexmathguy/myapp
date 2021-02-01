@@ -30,7 +30,7 @@ resources:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
-  - name: dbp_image5
+  - name: dbp_image6
     type: Image
     configuration:
       registry: MyDockerHubIntegration               # <-- replace with your artifactory integration
@@ -75,7 +75,7 @@ pipelines:
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     registry.hub.docker.com/realmethods/myapp
+          dockerImageName:     realmethods/myapp
           dockerImageTag:      latest
  
           integrations:
@@ -113,7 +113,7 @@ pipelines:
             - name:             docker_build_step2   # required
           outputResources:
             - name:             demoDockerBuildInfo2 # required if autoPublishBuildInfo is true
-            - name:             dbp_image5
+            - name:             dbp_image6
         execution:
           onStart:
             - echo "Preparing for Docker image push..."
