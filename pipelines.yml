@@ -35,7 +35,7 @@ resources:
     configuration:
       registry: DockerRegistry               # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
-      imageName: ]registry.hub.docker.com/realmethods/myapp  # < -- replace with your image path and name
+      imageName: registry.hub.docker.com/realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
       autoPull: false
       
