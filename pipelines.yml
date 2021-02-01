@@ -18,7 +18,12 @@ resources:
       sourceArtifactory:    MyMavenIntegration
       buildName:            demoBuild
       buildNumber:          1
-
+  - name: demoDockerBuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory:    MyDockerIntegration
+      buildName:            demoDockerBuild
+      buildNumber:          1
 pipelines:
   - name: demoPipeline2 
     steps:
@@ -32,7 +37,7 @@ pipelines:
             - name: demoRepo             # Use the demoRepo resource             
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
-              repo_passsword: "6969Cutlass!!"
+              repo_passsword: "6969Cutlass!!"              
               repo_url: "https://jcenter.bintray.com"
               skipTests: "true"
           sourceLocation: .
@@ -46,3 +51,58 @@ pipelines:
         execution:
           onSuccess:
            - echo "Build step using Maven is complete!"     
+
+      - name: docker_build_step
+        type: DockerBuild
+        configuration:
+          #inherits from bash
+          affinityGroup:       demo_affinity_group
+          dockerFileLocation:  .
+          dockerFileName:      Dockerfile
+          dockerImageName:     realMethods/myapp
+          dockerImageTag:      latest
+ 
+          integrations:
+            - name:            MyDockerRegistry  # required
+
+          inputResources:
+            - name:             demoRepo         # required, git repository containing your Dockerfile          
+
+          inputSteps:
+            - name:             build_step2
+            
+        execution:
+          onStart:
+            - echo "Preparing for Docker image build..."
+          onSuccess:
+            - echo "Docker image build was successful"
+          onFailure:
+            - echo "uh oh, something went wrong with the Docker image build"
+            
+      - name: docker_push_step
+        type: DockerPush
+        configuration:
+          #inherits from bash
+          affinityGroup:        demo_affinity_group
+          targetRepository:     local-docker-repo   # required
+          forceXrayScan:        true                # default false
+          failOnScan:           false               # default true
+          autoPublishBuildInfo: true                # default false
+ 
+          integrations:
+            - name:             MyDockerRegistry    # required
+          inputSteps:
+            - name:             docker_build_step   # required
+          outputResources:
+            - name:             demoDockerBuildInfo       # required if autoPublishBuildInfo is true
+ 
+        execution:
+          onStart:
+            - echo "Preparing for work..."
+          onSuccess:
+            - echo "Job well done!"
+          onFailure:
+            - echo "uh oh, something went wrong"
+          onComplete:
+            - echo "Cleaning up some stuff"            
+
