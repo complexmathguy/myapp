@@ -1,7 +1,7 @@
 FROM openjdk:8
 
 RUN mkdir /usr/local/demoApp
-COPY /target/*.jar /usr/local/demoApp/app.jar
+COPY ./target/demo-1.0.0.jar /usr/local/demoApp/
 
 # run tomcat
-CMD ["java", "-jar", "/usr/local/demoApp/app.jar"]
+CMD ["java", "-jar", "/usr/local/demoApp/demo-1.0.0.jar"]
