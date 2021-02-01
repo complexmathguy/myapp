@@ -79,9 +79,8 @@ pipelines:
           dockerImageTag:      latest
  
           integrations:
- #           - name:            MyDockerRegistry  # required
-            - name:            dbp_image
-
+            - name:            MyDockerRegistry  # required
+ 
           inputResources:
             - name:             demoRepo         # required, git repository containing your Dockerfile
             - name:             buildArchiveFile # what was constructed during the build step
@@ -108,14 +107,13 @@ pipelines:
           autoPublishBuildInfo: true                # default false
  
           integrations:
-#            - name:             MyMavenIntegration  # required
-            - name:            dbp_image
+            - name:             MyMavenIntegration  # required
             
           inputSteps:
             - name:             docker_build_step   # required
           outputResources:
             - name:             demoDockerBuildInfo # required if autoPublishBuildInfo is true
- 
+            - name:             dbp_image
         execution:
           onStart:
             - echo "Preparing for Docker image push..."
