@@ -30,12 +30,12 @@ resources:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
-  - name: dbp_image4
+  - name: dbp_image5
     type: Image
     configuration:
-      registry: MyDockerHubIntegration                # <-- replace with your artifactory integration
+      registry: registry.hub.docker.com/                # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
-      imageName: registry.hub.docker.com/realmethods/myapp  # < -- replace with your image path and name
+      imageName: realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
       autoPull: false
       
@@ -107,13 +107,13 @@ pipelines:
           autoPublishBuildInfo: true                # default false
  
           integrations:
-            - name:             MyMavenIntegration  # required
+            - name:             MyDockerIntegration  # required
             
           inputSteps:
             - name:             docker_build_step2   # required
           outputResources:
             - name:             demoDockerBuildInfo2 # required if autoPublishBuildInfo is true
-            - name:             dbp_image4
+            - name:             dbp_image5
         execution:
           onStart:
             - echo "Preparing for Docker image push..."
