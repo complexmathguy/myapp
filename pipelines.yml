@@ -18,10 +18,10 @@ resources:
       sourceArtifactory:    MyMavenIntegration
       buildName:            demoBuild
       buildNumber:          1
-  - name: demoDockerBuildInfo
+  - name: demoDockerBuildInfo2
     type: BuildInfo
     configuration:
-      sourceArtifactory:    MyDockerIntegration
+      sourceArtifactory:    MyDockerHubIntegration
       buildName:            demoDockerBuild
       buildNumber:          1
   - name: buildArchiveFile
@@ -30,10 +30,10 @@ resources:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
-  - name: dbp_image3
+  - name: dbp_image4
     type: Image
     configuration:
-      registry: MyDockerIntegration                # <-- replace with your artifactory integration
+      registry: MyDockerHubIntegration                # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
       imageName: knowops.jfrog.io/realmethods/myapp  # < -- replace with your image path and name
       imageTag: latest
@@ -68,18 +68,18 @@ pipelines:
           onSuccess:
            - echo "Build step using Maven is complete!"     
 
-      - name: docker_build_step
+      - name: docker_build_step2
         type: DockerBuild
         configuration:
           #inherits from bash
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
-          dockerImageName:     knowops.jfrog.io/realmethods/myapp
+          dockerImageName:     registry.hub.docker.com/realmethods/myapp
           dockerImageTag:      latest
  
           integrations:
-            - name:            MyDockerRegistry  # required
+            - name:            MyDockerHubRegistry  # required
  
           inputResources:
             - name:             demoRepo         # required, git repository containing your Dockerfile
@@ -110,10 +110,10 @@ pipelines:
             - name:             MyMavenIntegration  # required
             
           inputSteps:
-            - name:             docker_build_step   # required
+            - name:             docker_build_step2   # required
           outputResources:
-            - name:             demoDockerBuildInfo # required if autoPublishBuildInfo is true
-            - name:             dbp_image3
+            - name:             demoDockerBuildInfo2 # required if autoPublishBuildInfo is true
+            - name:             dbp_image4
         execution:
           onStart:
             - echo "Preparing for Docker image push..."
