@@ -1,5 +1,6 @@
 FROM maven:3-openjdk-8
 
+RUN printenv
 RUN mvn clean package
 
 RUN mkdir /usr/local/demoApp
