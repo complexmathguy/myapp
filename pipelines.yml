@@ -54,7 +54,7 @@ pipelines:
             type:           image
             image:          
               custom:
-                name:        mysql8
+                name:        mysql
                 tag:         latest
         execution:
           onStart:
