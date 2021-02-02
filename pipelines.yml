@@ -52,10 +52,10 @@ pipelines:
             
           runtime:           
             type:           image
-            image:          latest
+            image:          
               custom:
                 name:        mysql:8.0
-                tag:         
+                tag:         latest
         execution:
           onStart:
             - echo "MySQL Docker container starting"
