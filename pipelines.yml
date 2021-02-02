@@ -43,7 +43,7 @@ pipelines:
   - name: demoPipeline2 
     steps:
       - name: mysql_step
-        type: 
+        type: Bash
         configuration:        
           affinityGroup:       demo_affinity_group
 
