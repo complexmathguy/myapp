@@ -79,7 +79,8 @@ pipelines:
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
             - echo "Export the server IP address into a url  so MySQL can be accessed outside the container..."            
-            - export DATABASE_URL="jdbc:mysql://$SERVER_IP:3306/myApp?createDatabaseIfNotExist=true"            
+            - export DATABASE_URL="jdbc:mysql://$SERVER_IP:3306/myApp?createDatabaseIfNotExist=true"
+            - printenv DATABASE_URL
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
