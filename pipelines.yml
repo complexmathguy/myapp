@@ -71,7 +71,8 @@ pipelines:
             - echo "First, pull the latest MySQL Docker image"
             - docker pull mysql:8
             - echo "Next, run the MySQL image in it's own container"
-            - docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
+            - docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD=letmein2 -d -p 3306:3306 mysql:8
+            - docker ps
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
