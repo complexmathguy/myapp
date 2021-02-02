@@ -52,8 +52,7 @@ pipelines:
           inputResources:
             - name: demoRepo             # Use the demoRepo resource   
  #           - name: demoBuildInfo
-          inputSteps:
-            - name:             mysql_step            
+         
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"              
@@ -104,7 +103,7 @@ pipelines:
             - name:             buildArchiveFile # what was constructed during the build step
 
           inputSteps:
-            - name:             build_step2
+            - name:             build_step100
             
         execution:
           onStart:
