@@ -48,6 +48,7 @@ resources:
     # Build configuration
     # ==========================================================
     configuration:
+      
       sourceArtifactory:    MyMavenIntegration                 # The name of the Artifactory Integration <required>
       buildName:            demoBuild                          # The name of the build to associate with this BuildInfo <optional>
       buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
@@ -62,6 +63,7 @@ resources:
     # Build configuration
     # ==========================================================    
     configuration:
+      
       sourceArtifactory:    MyDockerIntegration                # The name of the Artifactory Integration <required>
       buildName:            demoDockerBuild                    # The name of the build to associate with this BuildInfo <optional>
       buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
@@ -76,6 +78,7 @@ resources:
     # File spec configuration
     # ========================================================== 
     configuration:
+      
       sourceArtifactory:   MyMavenIntegration                  # The name of the Artifactory Integration integration <required>
       pattern:             local-maven-repo/**/**/demo*.jar    # Fhe application archive file to download <required>
       target:              target/                             # Where to download the file to <optional for download>
@@ -123,26 +126,30 @@ pipelines:
         
           affinityGroup:                  demo_affinity_group # used to bind steps <optional>
           autoPublishBuildInfo:           true                # Publishes build info to Artifactory. Requires a BuildInfo resources in the outputResources list. Default is false.
+          sourceLocation:                 .                   # The source code starts at the root directory
+          mvnCommand:                     clean package       # Tells Maven to perform a clean then package the app
+          forceXrayScan:                  true                # Forces an Xray scan after publishing to Artifactory
+          failOnScan:                     true                # When set to  true, and  when the Xray Policy RuleFail Build  checkbox is checked, a failed Xray scan will result in a failure of the step
+          deployerReleaseRepo:            local-maven-repo    # Snapshot artifacts created by the MvnBuild are uploaded to this Artifactory repository
+          deployerSnapshotRepo:           local-maven-repo    # Release artifacts created by the MvnBuild are uploaded to this Artifactory repository.
+          
           outputResources:
             - name:                       demoMavenBuildInfo  # Uses the defined Maven build info resource               
+          
           inputResources:
             - name:                       demoGitRepo         # Use the demoGitRepo resource   
          
           environmentVariables:
-              repo_username:              "steven.randolph@realmethods.com"
-              repo_passsword: "6969Cutlass!!"              
-              repo_url: "https://jcenter.bintray.com"
-              skipTests: "false"
-#              DATABASE_URL: jdbc:mysql://34.227.151.24:3306/cloudMigrate?createDatabaseIfNotExist=true
-          sourceLocation: .
-          mvnCommand: clean package
+              repo_username:              "steven.randolph@realmethods.com"  # used to apply to the Maven settings.xml file if in use
+              repo_passsword:             "6969Cutlass!!"                    # used to apply to the Maven settings.xml file if in use
+              repo_url:                   "https://jcenter.bintray.com"      # used to apply to the Maven settings.xml file if in use
+              skipTests:                  "false"                            # Determines if testing should be invoked during Maven packaging
+
           integrations:
-            - name: MyMavenIntegration    
-          forceXrayScan: true
-          failOnScan: true   
-          deployerReleaseRepo: local-maven-repo
-          deployerSnapshotRepo: local-maven-repo
+            - name:                       MyMavenIntegration                 # Must specify an Artifactory Integration <required>  
+        
         execution:
+          
           onStart:
             - echo "Preparing for build using Maven..."
             - echo "MySQL install is required in order to test core app functionality..."
@@ -188,11 +195,17 @@ pipelines:
             - docker stop myAppMySQLContainer
             - docker rm myAppMySQLContainer          
 
-      - name: docker_build_step2
-        type: DockerBuild
-        
+      # ======================================================= 
+      # Docker Build Step
+      # =======================================================   
+      - name: docker_build_step2                              # Unique name <required>
+        type: DockerBuild                                     # Docker build type
+
+        # ======================================================= 
+        # Step configuration
+        # ======================================================= 
         configuration:
-          #inherits from bash
+        
           affinityGroup:       demo_affinity_group
           dockerFileLocation:  .
           dockerFileName:      Dockerfile
@@ -203,7 +216,7 @@ pipelines:
             - name:            MyDockerHubIntegration  # required
  
           inputResources:
-            - name:             demoRepo         # required, git repository containing your Dockerfile
+            - name:             demoGitRepo         # required, git repository containing your Dockerfile
             - name:             buildArchiveFile # what was constructed during the build step
 
           inputSteps:
@@ -220,9 +233,16 @@ pipelines:
           onFailure:
             - echo "uh oh, something went wrong with the Docker image build"
             
+      # ======================================================= 
+      # Docker Push Step
+      # =======================================================               
       - name: docker_push_step
         type: DockerPush
         
+        # ======================================================= 
+        # Step configuration
+        # ======================================================= 
+
         configuration:
         
           #inherits from bash
