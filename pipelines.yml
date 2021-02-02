@@ -25,7 +25,7 @@ resources:
       # ==========================================================
       # Repository path, including org name/repo name
       # ==========================================================
-      path: {{ .Values.demoRepo.path }} # this will be replaced from values.yml
+      path:        {{ .Values.demoRepo.path }} # this will be replaced from values.yml
       
       # ==========================================================
       # Specifies which branches will trigger dependent steps  
@@ -34,7 +34,7 @@ resources:
         # ==========================================================
         # Minimally includes the master branch
         # ==========================================================
-        include: master
+        include:   master
   
   # ==========================================================
   # Maven specific build information
@@ -70,20 +70,30 @@ resources:
   - name: buildArchiveFile
     type: FileSpec
     
+    # ==========================================================
+    # File spec configuration
+    # ========================================================== 
     configuration:
-      sourceArtifactory: MyMavenIntegration
-      pattern: local-maven-repo/**/**/demo*.jar
-      target: target/
-      
+      sourceArtifactory:   MyMavenIntegration                  # The name of the Artifactory Integration integration <required>
+      pattern:             local-maven-repo/**/**/demo*.jar    # the application archive file to download <required>
+      target:              target/                             # where to download the file to <optional for download>
+
+  # ==========================================================
+  # Used to add a reference to a Docker image to this pipeline
+  # ==========================================================
   - name: dbp_image10
     type: Image
-    
+
+    # ==========================================================
+    # Docker image configuration
+    # ========================================================== 
     configuration:
-      registry: DockerRegistry               # <-- replace with your artifactory integration
-      sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
-      imageName: knowops.jfrog.io/local-docker-repo/myapp  # < -- replace with your image path and name
-      imageTag: latest
-      autoPull: false
+    
+      registry:           DockerRegistry                            # The name of a Docker Registry Integration <required>
+      sourceRepository:   local-docker-repo                         # The name of the repository in Artifactory to which the images will be published <required>
+      imageName:          knowops.jfrog.io/local-docker-repo/myapp  # The file path of the Docker image, of the form imageRepo/imageName <equired>
+      imageTag:           latest                                    # The version tag of the initial version of the Docker image <required>
+      autoPull:           false                                     # When true, the image is automatically pulled to the machine running the step <default:false>
       
 pipelines:
 
@@ -138,7 +148,7 @@ pipelines:
 # Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
             - echo "mysql-server-5.6 mysql-server/root_password password root" | sudo debconf-set-selections
             - echo "mysql-server-5.6 mysql-server/root_password_again password root" | sudo debconf-set-selections
-            - apt-get -y install mysql-server-8.0
+            - apt-get -y install mysql-server
 # Run the MySQL Secure Installation wizard
             - mysql_secure_installation
             - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
