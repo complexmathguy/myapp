@@ -1,36 +1,72 @@
 template: true   # required for local templates
 valuesFilePath: values.yml
 
+# ==========================================================
+# Resources
+# ==========================================================
 resources:
   
+  # ==========================================================
+  # GitRepo Resource
+  # ==========================================================
   - name: demoRepo
     type: GitRepo
     
+    # ==========================================================
+    # Configurations related to the Git Repo in use
+    # ==========================================================
     configuration:
+      
+      # ==========================================================
       # SCM integration where the repository is located 
+      # ==========================================================
       gitProvider: {{ .Values.demoRepo.gitProvider }} # this will be replaced from values.yml
+  
+      # ==========================================================
       # Repository path, including org name/repo name
+      # ==========================================================
       path: {{ .Values.demoRepo.path }} # this will be replaced from values.yml
-      branches:
-        # Specifies which branches will trigger dependent steps  
+      
+      # ==========================================================
+      # Specifies which branches will trigger dependent steps  
+      # ==========================================================
+      branches:        
+        # ==========================================================
+        # Minimally includes the master branch
+        # ==========================================================
         include: master
   
-  - name: demoBuildInfo
+  # ==========================================================
+  # Maven specific build information
+  # ==========================================================
+  - name: demoMavenBuildInfo
     type: BuildInfo
   
+    # ==========================================================
+    # Build configuration
+    # ==========================================================
     configuration:
-      sourceArtifactory:    MyMavenIntegration
-      buildName:            demoBuild
-      buildNumber:          1
+      sourceArtifactory:    MyMavenIntegration                 # The name of the Artifactory Integration <required>
+      buildName:            demoBuild                          # The name of the build to associate with this BuildInfo <optional>
+      buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
       
+  # ==========================================================
+  # Docker specific build information
+  # ==========================================================
   - name: demoDockerBuildInfo2
     type: BuildInfo
     
+    # ==========================================================
+    # Build configuration
+    # ==========================================================    
     configuration:
-      sourceArtifactory:    MyDockerIntegration
-      buildName:            demoDockerBuild
-      buildNumber:          1
-      
+      sourceArtifactory:    MyDockerIntegration                # The name of the Artifactory Integration <required>
+      buildName:            demoDockerBuild                    # The name of the build to associate with this BuildInfo <optional>
+      buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
+
+  # ==========================================================
+  # Provides the details of files to download the application archive from Artifactory
+  # ==========================================================
   - name: buildArchiveFile
     type: FileSpec
     
@@ -60,10 +96,9 @@ pipelines:
           affinityGroup:       demo_affinity_group
           autoPublishBuildInfo: true
           outputResources:
-            - name: demoBuildInfo          
+            - name: demoMavenBuildInfo          
           inputResources:
             - name: demoRepo             # Use the demoRepo resource   
- #           - name: demoBuildInfo
          
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
@@ -103,7 +138,7 @@ pipelines:
 # Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
             - echo "mysql-server-5.6 mysql-server/root_password password root" | sudo debconf-set-selections
             - echo "mysql-server-5.6 mysql-server/root_password_again password root" | sudo debconf-set-selections
-            - apt-get -y install mysql-server-5.6
+            - apt-get -y install mysql-server-8.0
 # Run the MySQL Secure Installation wizard
             - mysql_secure_installation
             - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
