@@ -76,6 +76,7 @@ pipelines:
             - docker ps
             - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
+            - printenv SERVER_IP
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
