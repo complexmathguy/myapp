@@ -41,16 +41,6 @@ resources:
       
 pipelines:
   - name: demoPipeline4
-    configuration:
-      runtime:      
-        type: image
-        image:
-          custom:
-            name: mysql
-            tag: latest 
-      execution:
-        onStart:
-          - apt-get install -y git jfrog             
     steps:
       - name: build_step100
         type: MvnBuild
@@ -82,9 +72,9 @@ pipelines:
             - echo "Preparing for build using Maven..."
             - echo "MySQL install is required in order to test core app functionality..."
             - echo "First, pull the latest MySQL Docker image..."
- #           - docker pull mysql:8	            
+            - docker pull mysql:8	            
             - echo "Next, run the MySQL image in it's own container exposing port 3306..."
- #           - docker run -e MYSQL_ROOT_PASSWORD=letmein2 -p 3306:3306 -d mysql:8
+            - docker run -e MYSQL_ROOT_PASSWORD=letmein2 -p 3306:3306 -d mysql:8
             - echo "Export the server IP address into a env var so MySQL can be accessed outside the container..."
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
@@ -94,6 +84,7 @@ pipelines:
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
+            - docker ps
             - echo "uh oh, something went wrong with the Maven build"        
 
       - name: docker_build_step2
