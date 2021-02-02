@@ -55,7 +55,7 @@ pipelines:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"              
               repo_url: "https://jcenter.bintray.com"
-              skipTests: "true"
+              skipTests: "false"
           sourceLocation: .
           mvnCommand: clean package
           integrations:
@@ -67,7 +67,11 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for build using Maven..."
-            - docker --version
+            - echo "MySQL install is required in order to test core app functionality...
+            - echo "First, pull the latest MySQL Docker image
+            - docker pull mysql:8
+            - echo "Next, run the MySQL image in it's own container
+            - docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
