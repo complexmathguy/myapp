@@ -63,6 +63,7 @@ pipelines:
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
             - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
+            - printenv res_demoBuildInfo_DATABASE_URL
           onSuccess:
             - echo "MySQL Docker container start was successful"
           onFailure:
@@ -96,16 +97,6 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for build using Maven..."
-            - echo "MySQL install is required in order to test core app functionality..."
-            - echo "First, pull the latest MySQL Docker image"
-            - docker pull mysql:8
-            - echo "Next, run the MySQL image in it's own container"
-  #          - docker run -e MYSQL_ROOT_PASSWORD=letmein2 -d -p 3306:3306 mysql:8
-            - docker ps
-            - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
-            - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
-            - printenv SERVER_IP
-            - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
