@@ -86,7 +86,7 @@ resources:
   # ==========================================================
   # Used to add a reference to a Docker image to this pipeline
   # ==========================================================
-  - name: dbp_image10                                        # Unique name <required>
+  - name: docker_image_resource                              # Unique name <required>
     type: Image                                              # Image type <required> 
 
     # ==========================================================
@@ -116,7 +116,7 @@ pipelines:
       # ======================================================= 
       # Maven Build Step
       # =======================================================    
-      - name:                             build_step100       # Unique name <required>
+      - name:                             maven_build_step    # Unique name <required>
         type:                             MvnBuild            # Image type <required>  
         
         # ======================================================= 
@@ -124,7 +124,6 @@ pipelines:
         # ======================================================= 
         configuration:      
         
-          affinityGroup:                  demo_affinity_group # used to bind steps <optional>
           autoPublishBuildInfo:           true                # Publishes build info to Artifactory. Requires a BuildInfo resources in the outputResources list. Default is false.
           sourceLocation:                 .                   # The source code starts at the root directory
           mvnCommand:                     clean package       # Tells Maven to perform a clean then package the app
@@ -132,6 +131,7 @@ pipelines:
           failOnScan:                     true                # When set to  true, and  when the Xray Policy RuleFail Build  checkbox is checked, a failed Xray scan will result in a failure of the step
           deployerReleaseRepo:            local-maven-repo    # Snapshot artifacts created by the MvnBuild are uploaded to this Artifactory repository
           deployerSnapshotRepo:           local-maven-repo    # Release artifacts created by the MvnBuild are uploaded to this Artifactory repository.
+          affinityGroup:                  demo_affinity_group # used to bind steps <optional>
           
           outputResources:
             - name:                       demoMavenBuildInfo  # Uses the defined Maven build info resource               
@@ -199,29 +199,32 @@ pipelines:
       # Docker Build Step
       # =======================================================   
       - name: docker_build_step2                              # Unique name <required>
-        type: DockerBuild                                     # Docker build type
+        type: DockerBuild                                     # Docker build type <requierd>
 
         # ======================================================= 
         # Step configuration
         # ======================================================= 
         configuration:
         
-          affinityGroup:       demo_affinity_group
-          dockerFileLocation:  .
-          dockerFileName:      Dockerfile
-          dockerImageName:     knowops.jfrog.io/local-docker-repo/myapp
-          dockerImageTag:      latest
+          dockerFileLocation:                  .                                        # Directory containing the Dockerfile, which is the file that has Docker build configuration. <required>
+          dockerFileName:                      Dockerfile                               # Name of the Dockerfile <required>
+          dockerImageName:                     knowops.jfrog.io/local-docker-repo/myapp # The name of the Docker image to create <required>
+          dockerImageTag:                      latest                                   # The tag for the Docker image to create <required>
+          affinityGroup:                       demo_affinity_group                      # used to bind steps <optional>
  
           integrations:
-            - name:            MyDockerHubIntegration  # required
+            - name:                            MyDockerHubIntegration                   # Must specify an Artifactory Integration <required> 
  
           inputResources:
-            - name:             demoGitRepo         # required, git repository containing your Dockerfile
-            - name:             buildArchiveFile # what was constructed during the build step
+            - name:                            demoGitRepo                              # Git Repo containing the  Dockerfile
+            - name:                            buildArchiveFile                         # The archive file built during the previous build step
 
           inputSteps:
-            - name:             build_step100
-            
+            - name:                            maven_build_step                         # The required step of this one
+
+        # ======================================================
+        # execution sequences to apply before, during, and after step execution 
+        # ======================================================
         execution:
         
           onStart:
@@ -236,32 +239,33 @@ pipelines:
       # ======================================================= 
       # Docker Push Step
       # =======================================================               
-      - name: docker_push_step
-        type: DockerPush
+      - name: docker_push_step                               # Unique name <required>
+        type: DockerPush                                     # Docker build type <requierd>
         
         # ======================================================= 
         # Step configuration
         # ======================================================= 
-
         configuration:
         
-          #inherits from bash
-          affinityGroup:        demo_affinity_group
-          targetRepository:     local-docker-repo   # required
-          forceXrayScan:        true                # default false
-          failOnScan:           false               # default true
-          autoPublishBuildInfo: true                # default false
+          targetRepository:         local-docker-repo           # The name of the Docker repository in Artifactory <required>
+          affinityGroup:            demo_affinity_group         # used to bind steps <optional>
+          forceXrayScan:            true                        # Forces an Xray scan after publishing to Artifactory
+          failOnScan:               false                       # When set to  true, and  when the Xray Policy RuleFail Build  checkbox is checked, a failed Xray scan will result in a failure of the step
+          autoPublishBuildInfo:     true                        # Publishes build info with the Docker image
  
           integrations:
-            - name:             MyDockerIntegration  # required
+            - name:             MyDockerIntegration             # Must specify an Artifactory Integration <required>
             
           inputSteps:
-            - name:             docker_build_step2   # required
+            - name:             docker_build_step2              # Must specify the named DockerBuild step in the same affinity group
             
           outputResources:
-            - name:             demoDockerBuildInfo2 # required if autoPublishBuildInfo is true
-            - name:             dbp_image10
+            - name:             demoDockerBuildInfo2            # required if autoPublishBuildInfo is true
+            - name:             docker_image_resource           # docker image resource
             
+        # ======================================================
+        # execution sequences to apply before, during, and after step execution 
+        # ======================================================
         execution:
         
           onStart:
