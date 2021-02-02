@@ -2,15 +2,17 @@ template: true   # required for local templates
 valuesFilePath: values.yml
 
 # ==========================================================
-# Resources
+# Typically contain information needed for a step in a pipeline to execute and can also be used to store 
+# information produced by a step. Resources defined should be unique across all the pipelines. 
+# Because of that they also provide the way to link pipelines. 
 # ==========================================================
 resources:
   
   # ==========================================================
   # GitRepo Resource
   # ==========================================================
-  - name: demoRepo
-    type: GitRepo
+  - name: demoGitRepo                                        # Unique name <required>
+    type: GitRepo                                            # Git repo resource type <required>
     
     # ==========================================================
     # Configurations related to the Git Repo in use
@@ -20,12 +22,12 @@ resources:
       # ==========================================================
       # SCM integration where the repository is located 
       # ==========================================================
-      gitProvider: {{ .Values.demoRepo.gitProvider }} # this will be replaced from values.yml
+      gitProvider: {{ .Values.demoRepo.gitProvider }}           # This will be replaced from values.yml
   
       # ==========================================================
       # Repository path, including org name/repo name
       # ==========================================================
-      path:        {{ .Values.demoRepo.path }} # this will be replaced from values.yml
+      path:        {{ .Values.demoRepo.path }}                   # This will be replaced from values.yml
       
       # ==========================================================
       # Specifies which branches will trigger dependent steps  
@@ -39,8 +41,8 @@ resources:
   # ==========================================================
   # Maven specific build information
   # ==========================================================
-  - name: demoMavenBuildInfo
-    type: BuildInfo
+  - name: demoMavenBuildInfo                                  # Unique name <required>
+    type: BuildInfo                                           # Build information type <required>
   
     # ==========================================================
     # Build configuration
@@ -53,8 +55,8 @@ resources:
   # ==========================================================
   # Docker specific build information
   # ==========================================================
-  - name: demoDockerBuildInfo2
-    type: BuildInfo
+  - name: demoDockerBuildInfo2                               # Unique name <required>
+    type: BuildInfo                                          # Build information type <required>
     
     # ==========================================================
     # Build configuration
@@ -67,22 +69,22 @@ resources:
   # ==========================================================
   # Provides the details of files to download the application archive from Artifactory
   # ==========================================================
-  - name: buildArchiveFile
-    type: FileSpec
+  - name: buildArchiveFile                                   # Unique name <required>
+    type: FileSpec                                           # File spec type <required> 
     
     # ==========================================================
     # File spec configuration
     # ========================================================== 
     configuration:
       sourceArtifactory:   MyMavenIntegration                  # The name of the Artifactory Integration integration <required>
-      pattern:             local-maven-repo/**/**/demo*.jar    # the application archive file to download <required>
-      target:              target/                             # where to download the file to <optional for download>
+      pattern:             local-maven-repo/**/**/demo*.jar    # Fhe application archive file to download <required>
+      target:              target/                             # Where to download the file to <optional for download>
 
   # ==========================================================
   # Used to add a reference to a Docker image to this pipeline
   # ==========================================================
-  - name: dbp_image10
-    type: Image
+  - name: dbp_image10                                        # Unique name <required>
+    type: Image                                              # Image type <required> 
 
     # ==========================================================
     # Docker image configuration
@@ -95,23 +97,39 @@ resources:
       imageTag:           latest                                    # The version tag of the initial version of the Docker image <required>
       autoPull:           false                                     # When true, the image is automatically pulled to the machine running the step <default:false>
       
+# ==========================================================
+# A single pipeline used to build/test the application, perform a Docker build and finally a Docker push 
+# ==========================================================
 pipelines:
 
   - name: demoPipeline4
   
+    # =======================================================
+    # Unit of execution in a pipeline. It is triggered by some event and uses 
+    # resources to perform an action as part of the pipeline
+    # =======================================================    
     steps:
-      - name: build_step100
-        type: MvnBuild
-        configuration:        
-          affinityGroup:       demo_affinity_group
-          autoPublishBuildInfo: true
+    
+      # ======================================================= 
+      # Maven Build Step
+      # =======================================================    
+      - name:                             build_step100       # Unique name <required>
+        type:                             MvnBuild            # Image type <required>  
+        
+        # ======================================================= 
+        # Step configuration
+        # ======================================================= 
+        configuration:      
+        
+          affinityGroup:                  demo_affinity_group # used to bind steps <optional>
+          autoPublishBuildInfo:           true                # Publishes build info to Artifactory. Requires a BuildInfo resources in the outputResources list. Default is false.
           outputResources:
-            - name: demoMavenBuildInfo          
+            - name:                       demoMavenBuildInfo  # Uses the defined Maven build info resource               
           inputResources:
-            - name: demoRepo             # Use the demoRepo resource   
+            - name:                       demoGitRepo         # Use the demoGitRepo resource   
          
           environmentVariables:
-              repo_username: "steven.randolph@realmethods.com"
+              repo_username:              "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"              
               repo_url: "https://jcenter.bintray.com"
               skipTests: "false"
@@ -145,9 +163,9 @@ pipelines:
 #            - ufw allow 3306
 # Install essential packages
             - apt-get -y install zsh htop
-# Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
-            - echo "mysql-server-5.6 mysql-server/root_password password root" | sudo debconf-set-selections
-            - echo "mysql-server-5.6 mysql-server/root_password_again password root" | sudo debconf-set-selections
+# Install MySQL Server in a Non-Interactive mode. Default root password will be "letmein2"
+            - echo "mysql-server mysql-server/root_password password letmein2" | sudo debconf-set-selections
+            - echo "mysql-server mysql-server/root_password_again password letmein2" | sudo debconf-set-selections
             - apt-get -y install mysql-server
 # Run the MySQL Secure Installation wizard
             - mysql_secure_installation
