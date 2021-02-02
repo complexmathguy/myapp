@@ -65,8 +65,13 @@ pipelines:
           deployerReleaseRepo: local-maven-repo
           deployerSnapshotRepo: local-maven-repo
         execution:
+          onStart:
+            - echo "Preparing for build using Maven..."
+            - docker --version
           onSuccess:
-           - echo "Build step using Maven is complete!"     
+            - echo "Maven build was successful"
+          onFailure:
+            - echo "uh oh, something went wrong with the Maven build"        
 
       - name: docker_build_step2
         type: DockerBuild
