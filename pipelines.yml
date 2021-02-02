@@ -40,7 +40,7 @@ resources:
       autoPull: false
       
 pipelines:
-  - name: demoPipeline2 
+  - name: demoPipeline3
     steps:
       - name: mysql_step
         type: Bash
