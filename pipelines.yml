@@ -56,6 +56,7 @@ pipelines:
               repo_passsword: "6969Cutlass!!"              
               repo_url: "https://jcenter.bintray.com"
               skipTests: "false"
+              DATABASE_URL: "jdbc:mysql://$SERVER_IP:3306/cloudMigrate?createDatabaseIfNotExist=true"
           sourceLocation: .
           mvnCommand: clean package
           integrations:
@@ -73,6 +74,8 @@ pipelines:
             - echo "Next, run the MySQL image in it's own container"
             - docker run -e MYSQL_ROOT_PASSWORD=letmein2 -d -p 3306:3306 mysql:8
             - docker ps
+            - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
+            - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
