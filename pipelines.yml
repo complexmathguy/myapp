@@ -64,8 +64,9 @@ pipelines:
             - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
-            - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
+            - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://34.227.151.24:3306/cloudMigrate?createDatabaseIfNotExist=true"
             - printenv
+            
           onSuccess:
             - echo "MySQL Docker container start was successful"
           onFailure:
