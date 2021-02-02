@@ -97,6 +97,7 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for build using Maven..."
+            - printenv res_demoBuildInfo_DATABASE_URL
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
