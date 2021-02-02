@@ -52,7 +52,7 @@ pipelines:
             
           runtime:           
             type:           image
-            image:          
+            image:          latest
               custom:
                 name:        mysql:8.0
                 tag:         
