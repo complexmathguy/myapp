@@ -2,8 +2,10 @@ template: true   # required for local templates
 valuesFilePath: values.yml
 
 resources:
+  
   - name: demoRepo
     type: GitRepo
+    
     configuration:
       # SCM integration where the repository is located 
       gitProvider: {{ .Values.demoRepo.gitProvider }} # this will be replaced from values.yml
@@ -12,26 +14,34 @@ resources:
       branches:
         # Specifies which branches will trigger dependent steps  
         include: master
+  
   - name: demoBuildInfo
     type: BuildInfo
+  
     configuration:
       sourceArtifactory:    MyMavenIntegration
       buildName:            demoBuild
       buildNumber:          1
+      
   - name: demoDockerBuildInfo2
     type: BuildInfo
+    
     configuration:
       sourceArtifactory:    MyDockerIntegration
       buildName:            demoDockerBuild
       buildNumber:          1
+      
   - name: buildArchiveFile
     type: FileSpec
+    
     configuration:
       sourceArtifactory: MyMavenIntegration
       pattern: local-maven-repo/**/**/demo*.jar
       target: target/
+      
   - name: dbp_image10
     type: Image
+    
     configuration:
       registry: DockerRegistry               # <-- replace with your artifactory integration
       sourceRepository: local-docker-repo           # <-- required if registry is Artifactory
@@ -40,6 +50,7 @@ resources:
       autoPull: false
       
 pipelines:
+
   - name: demoPipeline4
     steps:
       - name: build_step100
@@ -72,26 +83,50 @@ pipelines:
             - echo "Preparing for build using Maven..."
             - echo "MySQL install is required in order to test core app functionality..."
             - echo "First, pull the latest MySQL Docker image..."
-            - docker pull mysql:8	            
+  #          - docker pull mysql:8	            
             - echo "Next, run the MySQL image in it's own container exposing port 3306..."
-            - docker run --name myAppMySQLContainer -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
+  #          - docker run --name myAppMySQLContainer -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
             - echo "Export the server IP address into a env var so MySQL can be accessed outside the container..."
-            - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
-            - printenv SERVER_IP
+  #          - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
+  #          - printenv SERVER_IP
+             - apt-get update && apt-get upgrade -y
+# Set the Server Timezone to CST
+#            - echo "America/Chicago" > /etc/timezone
+#            - dpkg-reconfigure -f noninteractive tzdata
+# Enable Ubuntu Firewall and allow SSH & MySQL Ports
+#            - ufw enable
+#            - ufw allow 22
+#            - ufw allow 3306
+# Install essential packages
+             - apt-get -y install zsh htop
+# Install MySQL Server in a Non-Interactive mode. Default root password will be "root"
+             - echo "mysql-server-5.6 mysql-server/root_password password root" | sudo debconf-set-selections
+             - echo "mysql-server-5.6 mysql-server/root_password_again password root" | sudo debconf-set-selections
+            - apt-get -y install mysql-server-5.6
+# Run the MySQL Secure Installation wizard
+            - mysql_secure_installation
+            - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
+            - mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
+            - service mysql restart
+            
             - echo "Export the server IP address into a url  so MySQL can be accessed outside the container..."            
             - export DATABASE_URL="jdbc:mysql://localhost:3306/myApp?createDatabaseIfNotExist=true"
             - printenv DATABASE_URL
+          
           onSuccess:
             - echo "Maven build was successful"
+          
           onFailure:
             - docker ps
             - echo "uh oh, something went wrong with the Maven build" 
+          
           onComplete:
             - docker stop myAppMySQLContainer
             - docker rm myAppMySQLContainer          
 
       - name: docker_build_step2
         type: DockerBuild
+        
         configuration:
           #inherits from bash
           affinityGroup:       demo_affinity_group
@@ -111,16 +146,21 @@ pipelines:
             - name:             build_step100
             
         execution:
+        
           onStart:
             - echo "Preparing for Docker image build..."
+            
           onSuccess:
             - echo "Docker image build was successful"
+            
           onFailure:
             - echo "uh oh, something went wrong with the Docker image build"
             
       - name: docker_push_step
         type: DockerPush
+        
         configuration:
+        
           #inherits from bash
           affinityGroup:        demo_affinity_group
           targetRepository:     local-docker-repo   # required
@@ -133,14 +173,19 @@ pipelines:
             
           inputSteps:
             - name:             docker_build_step2   # required
+            
           outputResources:
             - name:             demoDockerBuildInfo2 # required if autoPublishBuildInfo is true
             - name:             dbp_image10
+            
         execution:
+        
           onStart:
             - echo "Preparing for Docker image push..."
+            
           onSuccess:
             - echo "Docker image push was successful"
+            
           onFailure:
             - echo "uh oh, something went wrong with the Docker image push"
 
