@@ -56,6 +56,8 @@ pipelines:
               custom:
                 name:        mysql
                 tag:         latest
+          outputResources:
+            - name: demoBuildInfo                 
         execution:
           onStart:
             - echo "MySQL Docker container starting"
@@ -78,6 +80,7 @@ pipelines:
             - name: demoBuildInfo          
           inputResources:
             - name: demoRepo             # Use the demoRepo resource   
+            - name: demoBuildInfo
           inputSteps:
             - name:             mysql_step            
           environmentVariables:
