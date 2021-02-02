@@ -67,10 +67,10 @@ pipelines:
         execution:
           onStart:
             - echo "Preparing for build using Maven..."
-            - echo "MySQL install is required in order to test core app functionality...
-            - echo "First, pull the latest MySQL Docker image
+            - echo "MySQL install is required in order to test core app functionality..."
+            - echo "First, pull the latest MySQL Docker image"
             - docker pull mysql:8
-            - echo "Next, run the MySQL image in it's own container
+            - echo "Next, run the MySQL image in it's own container"
             - docker run --name demo-mysql -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
           onSuccess:
             - echo "Maven build was successful"
