@@ -42,6 +42,32 @@ resources:
 pipelines:
   - name: demoPipeline2 
     steps:
+      - name: mysql_step
+        type: 
+        configuration:        
+          affinityGroup:       demo_affinity_group
+
+#          inputResources:
+#            - name: demoRepo             # Use the demoRepo resource             
+            
+          runtime:           
+            type:           image
+            image:          
+              custom:
+                name:        mysql:8
+                tag:         latest
+        execution:
+          onStart:
+            - echo "MySQL Docker container starting"
+            - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
+            - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
+            - printenv SERVER_IP
+            - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
+          onSuccess:
+            - echo "MySQL Docker container start was successful"
+          onFailure:
+            - echo "uh oh, something went wrong with the MySQL Docker container starting"        
+
       - name: build_step2
         type: MvnBuild
         configuration:        
@@ -50,7 +76,9 @@ pipelines:
           outputResources:
             - name: demoBuildInfo          
           inputResources:
-            - name: demoRepo             # Use the demoRepo resource             
+            - name: demoRepo             # Use the demoRepo resource   
+          inputSteps:
+            - name:             mysql_step            
           environmentVariables:
               repo_username: "steven.randolph@realmethods.com"
               repo_passsword: "6969Cutlass!!"              
