@@ -80,7 +80,7 @@ pipelines:
             - name: demoBuildInfo          
           inputResources:
             - name: demoRepo             # Use the demoRepo resource   
-            - name: demoBuildInfo
+ #           - name: demoBuildInfo
           inputSteps:
             - name:             mysql_step            
           environmentVariables:
