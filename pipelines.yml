@@ -76,6 +76,7 @@ pipelines:
           deployerSnapshotRepo: local-maven-repo
         execution:
           onStart:
+            - apt-get install -y git
             - echo "Preparing for build using Maven..."
             - echo "MySQL install is required in order to test core app functionality..."
             - echo "First, pull the latest MySQL Docker image..."
