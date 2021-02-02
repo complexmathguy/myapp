@@ -54,8 +54,8 @@ pipelines:
             type:           image
             image:          
               custom:
-                name:        mysql:8
-                tag:         latest
+                name:        mysql:8.0
+                tag:         
         execution:
           onStart:
             - echo "MySQL Docker container starting"
@@ -63,7 +63,7 @@ pipelines:
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
             - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
-            - printenv res_demoBuildInfo_DATABASE_URL
+            - printenv
           onSuccess:
             - echo "MySQL Docker container start was successful"
           onFailure:
