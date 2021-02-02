@@ -56,6 +56,7 @@ pipelines:
               repo_passsword: "6969Cutlass!!"              
               repo_url: "https://jcenter.bintray.com"
               skipTests: "false"
+              DATABASE_URL: $res_demoBuildInfo_DATABASE_URL
           sourceLocation: .
           mvnCommand: clean package
           integrations:
@@ -76,7 +77,7 @@ pipelines:
             - echo "Export the server IP address into a env var so MySQL can be accessed outside the container"
             - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
             - printenv SERVER_IP
-            - write_output DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
+            - write_output demoBuildInfo DATABASE_URL="jdbc:mysql://${SERVER_IP}:3306/cloudMigrate?createDatabaseIfNotExist=true"
           onSuccess:
             - echo "Maven build was successful"
           onFailure:
