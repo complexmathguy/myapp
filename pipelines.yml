@@ -103,7 +103,7 @@ resources:
       autoPull:           false                                     # When true, the image is automatically pulled to the machine running the step <default:false>
       
 pipelines:
-  - name: demoPipeline
+  - name: demoPipeline100
   
 
       # ======================================================= 
