@@ -1,5 +1,7 @@
 template: true   # required for local templates
-valuesFilePath: values.yml
+valuesFilePath: ./values.yml
+
+
 
 # ==========================================================
 # Typically contain information needed for a step in a pipeline to execute and can also be used to store 
@@ -11,7 +13,7 @@ resources:
   # ==========================================================
   # GitRepo Resource
   # ==========================================================
-  - name: demoGitRepo                                        # Unique name <required>
+  - name: git_repo                                           # Unique name <required>
     type: GitRepo                                            # Git repo resource type <required>
     
     # ==========================================================
@@ -41,7 +43,7 @@ resources:
   # ==========================================================
   # Maven specific build information
   # ==========================================================
-  - name: demoMavenBuildInfo                                  # Unique name <required>
+  - name: maven_build_info                                   # Unique name <required>
     type: BuildInfo                                           # Build information type <required>
   
     # ==========================================================
@@ -50,13 +52,13 @@ resources:
     configuration:
       
       sourceArtifactory:    MyMavenIntegration                 # The name of the Artifactory Integration <required>
-      buildName:            demoBuild                          # The name of the build to associate with this BuildInfo <optional>
+      buildName:            demoBuild                    # The name of the build to associate with this BuildInfo <optional>
       buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
       
   # ==========================================================
   # Docker specific build information
   # ==========================================================
-  - name: demoDockerBuildInfo2                               # Unique name <required>
+  - name: docker_build_info                                  # Unique name <required>
     type: BuildInfo                                          # Build information type <required>
     
     # ==========================================================
@@ -64,8 +66,8 @@ resources:
     # ==========================================================    
     configuration:
       
-      sourceArtifactory:    MyDockerIntegration                # The name of the Artifactory Integration <required>
-      buildName:            demoDockerBuild                    # The name of the build to associate with this BuildInfo <optional>
+      sourceArtifactory:    MyDockerIntegration       # The name of the Artifactory Integration <required>
+      buildName:            demoDockerBuild              # The name of the build to associate with this BuildInfo <optional>
       buildNumber:          1                                  # The number of the build to associate with this BuildInfo <optional>
 
   # ==========================================================
@@ -79,7 +81,7 @@ resources:
     # ========================================================== 
     configuration:
       
-      sourceArtifactory:   MyMavenIntegration                  # The name of the Artifactory Integration integration <required>
+      sourceArtifactory:   MyMavenIntegration           # The name of the Artifactory Integration <required>
       pattern:             local-maven-repo/**/**/demo*.jar    # Fhe application archive file to download <required>
       target:              target/                             # Where to download the file to <optional for download>
 
@@ -94,25 +96,16 @@ resources:
     # ========================================================== 
     configuration:
     
-      registry:           DockerRegistry                            # The name of a Docker Registry Integration <required>
-      sourceRepository:   local-docker-repo                         # The name of the repository in Artifactory to which the images will be published <required>
-      imageName:          knowops.jfrog.io/local-docker-repo/myapp  # The file path of the Docker image, of the form imageRepo/imageName <equired>
+      registry:           DockerRegistry                         # The name of a Docker Registry Integration <required>
+      sourceRepository:   local-docker-repo                     # The name of the repository in Artifactory to which the images will be published <required>
+      imageName:          knowops.jfrog.io/local-docker-repo/demo # The file path of the Docker image, of the form imageRepo/imageName <equired>
       imageTag:           latest                                    # The version tag of the initial version of the Docker image <required>
       autoPull:           false                                     # When true, the image is automatically pulled to the machine running the step <default:false>
       
-# ==========================================================
-# A single pipeline used to build/test the application, perform a Docker build and finally a Docker push 
-# ==========================================================
 pipelines:
-
-  - name: demoPipeline4
+  - name: demoPipeline
   
-    # =======================================================
-    # Unit of execution in a pipeline. It is triggered by some event and uses 
-    # resources to perform an action as part of the pipeline
-    # =======================================================    
-    steps:
-    
+
       # ======================================================= 
       # Maven Build Step
       # =======================================================    
@@ -131,74 +124,36 @@ pipelines:
           failOnScan:                     true                # When set to  true, and  when the Xray Policy RuleFail Build  checkbox is checked, a failed Xray scan will result in a failure of the step
           deployerReleaseRepo:            local-maven-repo    # Snapshot artifacts created by the MvnBuild are uploaded to this Artifactory repository
           deployerSnapshotRepo:           local-maven-repo    # Release artifacts created by the MvnBuild are uploaded to this Artifactory repository.
-          affinityGroup:                  demo_affinity_group # used to bind steps <optional>
+          affinityGroup:                  shared_affinity_group # used to bind steps <optional>
           
           outputResources:
-            - name:                       demoMavenBuildInfo  # Uses the defined Maven build info resource               
+            - name:                       maven_build_info  # Uses the defined Maven build info resource               
           
           inputResources:
-            - name:                       demoGitRepo         # Use the demoGitRepo resource   
+            - name:                       git_repo         # Use the demoGitRepo resource   
          
           environmentVariables:
-              repo_username:              "steven.randolph@realmethods.com"  # used to apply to the Maven settings.xml file if in use
-              repo_passsword:             "6969Cutlass!!"                    # used to apply to the Maven settings.xml file if in use
-              repo_url:                   "https://jcenter.bintray.com"      # used to apply to the Maven settings.xml file if in use
-              skipTests:                  "false"                            # Determines if testing should be invoked during Maven packaging
-
+              skipTests:                  "true"                # Determines if testing should be invoked during Maven packaging
+              DATABASE_URL:               jdbc:mysql://34.227.151.24:3306/cloudMigrate?createDatabaseIfNotExist=true        # if skipTests set to false, point the host name or ip address to running MySQL instance
+              
           integrations:
-            - name:                       MyMavenIntegration                 # Must specify an Artifactory Integration <required>  
+            - name:                       MyMavenIntegration  # Must specify an Artifactory Integration <required>  
         
         execution:
           
           onStart:
             - echo "Preparing for build using Maven..."
-            - echo "MySQL install is required in order to test core app functionality..."
-            - echo "First, pull the latest MySQL Docker image..."
-  #          - docker pull mysql:8	            
-            - echo "Next, run the MySQL image in it's own container exposing port 3306..."
-  #          - docker run --name myAppMySQLContainer -e MYSQL_ROOT_PASSWORD=letmein2 -d mysql:8
-            - echo "Export the server IP address into a env var so MySQL can be accessed outside the container..."
-  #          - export SERVER_IP="$(hostname -I | cut -f1 -d' ')"
-  #          - printenv SERVER_IP
-            - apt-get update && apt-get upgrade -y
-# Set the Server Timezone to CST
-#            - echo "America/Chicago" > /etc/timezone
-#            - dpkg-reconfigure -f noninteractive tzdata
-# Enable Ubuntu Firewall and allow SSH & MySQL Ports
-#            - ufw enable
-#            - ufw allow 22
-#            - ufw allow 3306
-# Install essential packages
-            - apt-get -y install zsh htop
-# Install MySQL Server in a Non-Interactive mode. Default root password will be "letmein2"
-            - echo "mysql-server mysql-server/root_password password letmein2" | sudo debconf-set-selections
-            - echo "mysql-server mysql-server/root_password_again password letmein2" | sudo debconf-set-selections
-            - apt-get -y install mysql-server
-# Run the MySQL Secure Installation wizard
-            - mysql_secure_installation
-            - sed -i 's/127\.0\.0\.1/0\.0\.0\.0/g' /etc/mysql/my.cnf
-            - mysql -uroot -p -e 'USE mysql; UPDATE `user` SET `Host`="%" WHERE `User`="root" AND `Host`="localhost"; DELETE FROM `user` WHERE `Host` != "%" AND `User`="root"; FLUSH PRIVILEGES;'
-            - service mysql restart
+
+          onSuccess:                       # preserve test results
+            - mkdir -p jfrog_pipelines/testresults
+            - find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} jfrog_pipelines/testresults/ \;
             
-            - echo "Export the server IP address into a url  so MySQL can be accessed outside the container..."            
-            - export DATABASE_URL="jdbc:mysql://localhost:3306/myApp?createDatabaseIfNotExist=true"
-            - printenv DATABASE_URL
-          
-          onSuccess:
-            - echo "Maven build was successful"
-          
-          onFailure:
-            - docker ps
-            - echo "uh oh, something went wrong with the Maven build" 
-          
-          onComplete:
-            - docker stop myAppMySQLContainer
-            - docker rm myAppMySQLContainer          
+
 
       # ======================================================= 
       # Docker Build Step
       # =======================================================   
-      - name: docker_build_step2                              # Unique name <required>
+      - name: docker_build_step                               # Unique name <required>
         type: DockerBuild                                     # Docker build type <requierd>
 
         # ======================================================= 
@@ -208,19 +163,19 @@ pipelines:
         
           dockerFileLocation:                  .                                        # Directory containing the Dockerfile, which is the file that has Docker build configuration. <required>
           dockerFileName:                      Dockerfile                               # Name of the Dockerfile <required>
-          dockerImageName:                     knowops.jfrog.io/local-docker-repo/myapp # The name of the Docker image to create <required>
+          dockerImageName:                     knowops.jfrog.io/local-docker-repo/demo                             # The name of the Docker image to create <required>
           dockerImageTag:                      latest                                   # The tag for the Docker image to create <required>
-          affinityGroup:                       demo_affinity_group                      # used to bind steps <optional>
+          affinityGroup:                       shared_affinity_group                    # used to bind steps <optional>
  
           integrations:
-            - name:                            MyDockerHubIntegration                   # Must specify an Artifactory Integration <required> 
+            - name:                            MyDockerIntegration             # Must specify an Artifactory Integration <required> 
  
           inputResources:
-            - name:                            demoGitRepo                              # Git Repo containing the  Dockerfile
+            - name:                            git_repo                                 # Git Repo containing the  Dockerfile
             - name:                            buildArchiveFile                         # The archive file built during the previous build step
 
           inputSteps:
-            - name:                            maven_build_step                         # The required step of this one
+            - name:                            build_step                               # The required step of this one
 
         # ======================================================
         # execution sequences to apply before, during, and after step execution 
@@ -235,7 +190,8 @@ pipelines:
             
           onFailure:
             - echo "uh oh, something went wrong with the Docker image build"
-            
+
+
       # ======================================================= 
       # Docker Push Step
       # =======================================================               
@@ -247,20 +203,20 @@ pipelines:
         # ======================================================= 
         configuration:
         
-          targetRepository:         local-docker-repo           # The name of the Docker repository in Artifactory <required>
-          affinityGroup:            demo_affinity_group         # used to bind steps <optional>
+          targetRepository:         local-docker-repo       # The name of the Docker repository in Artifactory <required>
+          affinityGroup:            shared_affinity_group       # used to bind steps <optional>
           forceXrayScan:            true                        # Forces an Xray scan after publishing to Artifactory
           failOnScan:               false                       # When set to  true, and  when the Xray Policy RuleFail Build  checkbox is checked, a failed Xray scan will result in a failure of the step
           autoPublishBuildInfo:     true                        # Publishes build info with the Docker image
  
           integrations:
-            - name:             MyDockerIntegration             # Must specify an Artifactory Integration <required>
+            - name:             MyDockerIntegration    # Must specify an Artifactory Integration <required>
             
           inputSteps:
-            - name:             docker_build_step2              # Must specify the named DockerBuild step in the same affinity group
+            - name:             docker_build_step               # Must specify the named DockerBuild step in the same affinity group
             
-          outputResources:
-            - name:             demoDockerBuildInfo2            # required if autoPublishBuildInfo is true
+          outputResources:            
+            - name:             docker_build_info               # required if autoPublishBuildInfo is true
             - name:             docker_image_resource           # docker image resource
             
         # ======================================================
@@ -276,4 +232,3 @@ pipelines:
             
           onFailure:
             - echo "uh oh, something went wrong with the Docker image push"
-
